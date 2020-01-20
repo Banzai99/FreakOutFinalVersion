@@ -21,7 +21,7 @@ class Board(mp.Process):
     def afficheBoard(self, mqverifT):
         print("============================BOARD============================")
         nbdecartes = len(self.cartesonboard)
-        fin = " "
+        fin = ""
         for card in self.cartesonboard:
             if card.couleur == "bleu":
                 couleur = Fore.BLUE
@@ -48,7 +48,7 @@ class Board(mp.Process):
                 couleur = Fore.BLUE
             else:
                 couleur = Fore.RED
-            print(couleur + "╚═════════╝", end=fin, flush=True)
+            print(couleur + "╚════════╝", end=fin, flush=True)
         print("" + Style.RESET_ALL)
         print("=============================================================")
 
@@ -73,6 +73,9 @@ class Board(mp.Process):
             if int(nmbcarteshand.decode()) == 0:
                 with self.printlock:
                     self.afficheBoard(mqverifT)
+                mqaffichage.send(str(1).encode(), type=1)
+                time.sleep(0.01)
+                mqaffichage.send(str(1).encode(), type=2)
                 print("Joueur " + str(carterecue.numerojoueur) + " gagne !")
                 while not self.deck.empty():
                     self.deck.get()
@@ -111,6 +114,7 @@ class Board(mp.Process):
             x.start()
         # affichage = threading.Thread(target=self.afficheBoard, args=(mqverifT,))
         # affichage.start()
+
         while True:
             os.system('cls||clear')
             with self.printlock:

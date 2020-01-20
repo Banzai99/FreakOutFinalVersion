@@ -55,7 +55,7 @@ class Players(mp.Process):
                 couleur = Fore.BLUE
             else:
                 couleur = Fore.RED
-            print(couleur + "╚═════════╝", end=fin, flush=True)
+            print(couleur + "╚════"+str(self.cartesmain.index(card)+1)+"════╝", end=fin, flush=True)
         print("" + Style.RESET_ALL)
 
     def affichageforce(self, mqaffichage):
