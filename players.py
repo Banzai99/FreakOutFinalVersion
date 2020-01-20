@@ -27,7 +27,7 @@ class Players(mp.Process):
     def afficheHand(self):
         print("MAIN DU JOUEUR" + str(self.numero))
         nbdecartes = len(self.cartesmain)
-        fin = "  "
+        fin = " "
         couleur = Fore.RED
         for card in self.cartesmain:
             if card.couleur == "bleu":
@@ -77,7 +77,7 @@ class Players(mp.Process):
         threadaffichage = threading.Thread(target=self.affichageforce, args=(mqaffichage, ))
         threadaffichage.start()
 
-        while True:
+        while len(self.cartesmain) != 0 and not self.deck.empty():
             timer = multitimer.MultiTimer(interval=10, function=self.pioche, kwargs={"mqaffichage": mqaffichage}, runonstart=False)
             timer.start()
             erreur = True
@@ -106,5 +106,4 @@ class Players(mp.Process):
             else:
                 self.pioche(mqaffichage)
                 # print("Tu as pioché")
-
-
+        threadaffichage.join()
