@@ -121,5 +121,6 @@ if __name__ == "__main__":
     os.system('clear')
     size = shutil.get_terminal_size()
     print("FreakOut, The Game".center(size[0]))
-    time.sleep(1)
+    print("Player 1 plays with \"AZERTYUIOP\" | Player 2 plays with \"123456789\"".center(size[0]))
+    time.sleep(3)
     commencementdujeu(2)
