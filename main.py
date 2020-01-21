@@ -122,5 +122,6 @@ if __name__ == "__main__":
     size = shutil.get_terminal_size()
     print("FreakOut, The Game".center(size[0]))
     print("Player 1 plays with \"AZERTYUIOP\" | Player 2 plays with \"123456789\"".center(size[0]))
-    time.sleep(3)
+    print("La position de la carte dans la main s'affiche en bas de la carte afin de la retrouver plus facilement".center(size[0]))
+    time.sleep(8)
     commencementdujeu(2)

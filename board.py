@@ -48,7 +48,7 @@ class Board(mp.Process):
                 couleur = Fore.BLUE
             else:
                 couleur = Fore.RED
-            print(couleur + "╚════════╝", end=fin, flush=True)
+            print(couleur + "╚═════════╝", end=fin, flush=True)
         print("" + Style.RESET_ALL)
         print("=============================================================")
 
@@ -76,7 +76,8 @@ class Board(mp.Process):
                 mqaffichage.send(str(1).encode(), type=1)
                 time.sleep(0.01)
                 mqaffichage.send(str(1).encode(), type=2)
-                print("Joueur " + str(carterecue.numerojoueur) + " gagne !")
+                with self.printlock:
+                    print("Joueur " + str(carterecue.numerojoueur) + " gagne !")
                 while not self.deck.empty():
                     self.deck.get()
         else:
