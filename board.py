@@ -72,11 +72,7 @@ class Board(mp.Process):
 
             if int(nmbcarteshand.decode()) == 0:
                 with self.printlock:
-                    self.afficheBoard(mqverifT)
-                mqaffichage.send(str(1).encode(), type=1)
-                time.sleep(0.01)
-                mqaffichage.send(str(1).encode(), type=2)
-                with self.printlock:
+                    mqaffichage.send(str(1).encode(), type=4)
                     print("Joueur " + str(carterecue.numerojoueur) + " gagne !")
                 while not self.deck.empty():
                     self.deck.get()
@@ -86,6 +82,18 @@ class Board(mp.Process):
 
         # print(str(mp.current_process()) + " | allo")
 
+    def affichageforce(self, mqaffichage, mqverifT):
+        while not self.deck.empty():
+            _, _ = mqaffichage.receive(type=4)
+            os.system('cls||clear')
+            with self.printlock:
+                self.afficheBoard(mqverifT)
+                print("oui")
+            mqaffichage.send(str(1).encode(), type=1)
+            time.sleep(0.01)
+            mqaffichage.send(str(1).encode(), type=2)
+            print("affichage update")
+
     def run(self):
         mqverifT = []
         mqcards = sysv_ipc.MessageQueue(100)
@@ -94,6 +102,7 @@ class Board(mp.Process):
         mains = []
         players = []
         keys = []
+
         for i in range(self.nbjoueurs):
             mains.append([])
             keys.append(i + 1)
@@ -113,17 +122,14 @@ class Board(mp.Process):
         for x in players:
             # print("jouons !")
             x.start()
-        # affichage = threading.Thread(target=self.afficheBoard, args=(mqverifT,))
-        # affichage.start()
+        with self.printlock:
+            threadaffichage = threading.Thread(target=self.affichageforce, args=(mqaffichage, mqverifT))
+            threadaffichage.start()
 
         while True:
-            os.system('cls||clear')
-            with self.printlock:
-                self.afficheBoard(mqverifT)
-            mqaffichage.send(str(1).encode(), type=1)
-            time.sleep(0.01)
-            mqaffichage.send(str(1).encode(), type=2)
+            mqaffichage.send(str(1).encode(), type=4)
             # print(str(mp.current_process()) + " | and now we wait for a card")
             carterecue, t = mqcards.receive()
             # print(str(mp.current_process()) + " | Carte recue !")
             self.verification(loads(carterecue), mqverifT, mqhandsize, mqaffichage)
+

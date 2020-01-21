@@ -22,7 +22,7 @@ class Players(mp.Process):
         cartepiochee = self.deck.get()
         cartepiochee.numerojoueur = self.numero
         self.cartesmain.append(cartepiochee)
-        mqaffichage.send(str(1).encode(), type=self.numero)
+        mqaffichage.send(str(1).encode(), type=4)
 
     def afficheHand(self):
         print("MAIN DU JOUEUR" + str(self.numero))
@@ -55,7 +55,10 @@ class Players(mp.Process):
                 couleur = Fore.BLUE
             else:
                 couleur = Fore.RED
-            print(couleur + "╚════"+str(self.cartesmain.index(card)+1)+"════╝", end=fin, flush=True)
+            if self.cartesmain.index(card)+1 < 10:
+                print(couleur + "╚════"+str(self.cartesmain.index(card)+1)+"════╝", end=fin, flush=True)
+            else:
+                print(couleur + "╚════" + str(self.cartesmain.index(card) + 1) + "═══╝", end=fin, flush=True)
         print("" + Style.RESET_ALL)
 
     def affichageforce(self, mqaffichage):
@@ -107,3 +110,4 @@ class Players(mp.Process):
                 self.pioche(mqaffichage)
                 # print("Tu as pioché")
         threadaffichage.join()
+
