@@ -56,31 +56,23 @@ class Board(mp.Process):
         valide = False
         for carte in self.cartesonboard:
             if (carte.couleur == carterecue.couleur) and (abs(carte.numero - carterecue.numero) == 1) and not valide:
-                # print(str(mp.current_process()) + " | Carte valide")
                 valide = True
             elif (carte.couleur != carterecue.couleur) and (carte.numero == carterecue.numero) and not valide:
-                # print(str(mp.current_process()) + " | Carte valide")
                 valide = True
 
         if valide:
             self.cartesonboard.append(carterecue)
-            # print(str(mp.current_process()) + " | Move valide, on process mais pas recu")
             mqverifT[carterecue.numerojoueur - 1].send((str(True)).encode())
-            # nmbcarteshand, t = mqverifT[carterecue.numerojoueur].receive()
             nmbcarteshand, t = mqhandsize.receive()
-            # print(str(mp.current_process()) + " | Move valide, on process")
 
             if int(nmbcarteshand.decode()) == 0:
+                mqaffichage.send(str(1).encode(), type=4)
                 with self.printlock:
-                    mqaffichage.send(str(1).encode(), type=4)
                     print("Joueur " + str(carterecue.numerojoueur) + " gagne !")
                 while not self.deck.empty():
                     self.deck.get()
         else:
-            # print(str(mp.current_process()) + " | Tu pioches")
             mqverifT[carterecue.numerojoueur - 1].send((str(False)).encode())
-
-        # print(str(mp.current_process()) + " | allo")
 
     def affichageforce(self, mqaffichage, mqverifT):
         while not self.deck.empty():
@@ -88,11 +80,9 @@ class Board(mp.Process):
             os.system('cls||clear')
             with self.printlock:
                 self.afficheBoard(mqverifT)
-                print("oui")
             mqaffichage.send(str(1).encode(), type=1)
             time.sleep(0.01)
             mqaffichage.send(str(1).encode(), type=2)
-            print("affichage update")
 
     def run(self):
         mqverifT = []
@@ -109,18 +99,14 @@ class Board(mp.Process):
 
             mqverif = sysv_ipc.MessageQueue(keys[i])
             mqverifT.append(mqverif)
-            # print(mqverifT[i])
 
             for j in range(1, 6):
                 mains[i].append(self.deck.get())
                 mains[i][j - 1].numerojoueur = i + 1
 
-            # print("joueur crée")
             players.append(Players(i + 1, self.deck, mains[i], self.printlock))
-            # print(players[i])
 
         for x in players:
-            # print("jouons !")
             x.start()
         with self.printlock:
             threadaffichage = threading.Thread(target=self.affichageforce, args=(mqaffichage, mqverifT))
@@ -128,8 +114,6 @@ class Board(mp.Process):
 
         while True:
             mqaffichage.send(str(1).encode(), type=4)
-            # print(str(mp.current_process()) + " | and now we wait for a card")
             carterecue, t = mqcards.receive()
-            # print(str(mp.current_process()) + " | Carte recue !")
             self.verification(loads(carterecue), mqverifT, mqhandsize, mqaffichage)
 

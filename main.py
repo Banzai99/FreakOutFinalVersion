@@ -27,7 +27,6 @@ def commencementdujeu(nbjoueurs):
         decklist.append(Cards(i + 1, "bleu"))
         decklist.append(Cards(i + 1, "rouge"))
     random.shuffle(decklist)
-    # print(decklist)
     # On le convertit ensuite en queue afin de pouvoir le partager à tous les process
     for card in decklist:
         deck.put(card)
@@ -73,7 +72,6 @@ def commencementdujeu(nbjoueurs):
         try:
             mqverif = sysv_ipc.MessageQueue(keys[i], sysv_ipc.IPC_CREX)
             mqverifT.append(mqverif)
-            # print(mqverifT[i])
         except sysv_ipc.ExistentialError:
             sysv_ipc.MessageQueue(keys[i]).remove()
 
@@ -87,13 +85,10 @@ def commencementdujeu(nbjoueurs):
         while not deck.empty():
             if kb.kbhit():
                 c = kb.getch()
-                # print(c)
                 if c in touchesjoueurs[0]:
                     mqtouchejouee1.send(str((touchesjoueurs[0].index(c) + 1)).encode())
-                    # print("oui")
                 elif c in touchesjoueurs[1]:
                     mqtouchejouee2.send(c.encode())
-                    # print("non")
                 else:
                     print("Veuillez entrer une touche valide")
         mqcards.remove()
@@ -123,6 +118,6 @@ if __name__ == "__main__":
     print("FreakOut, The Game".center(size[0]))
     print("Player 1 plays with \"AZERTYUIOP\" | Player 2 plays with \"123456789\"".center(size[0]))
     print("La position de la carte dans la main s'affiche en bas de la carte afin de la retrouver plus facilement".center(size[0]))
-    time.sleep(2)
+    time.sleep(8)
     commencementdujeu(2)
 

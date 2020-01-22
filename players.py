@@ -62,9 +62,6 @@ class Players(mp.Process):
         print("" + Style.RESET_ALL)
 
     def affichageforce(self, mqaffichage):
-        # type = 1
-        # if self.numero == 1:
-        #     type = 2
         while True:
             _, _ = mqaffichage.receive(type=self.numero)
             with self.printlock:
@@ -93,21 +90,13 @@ class Players(mp.Process):
                     erreur = False
                 except IndexError:
                     print("Joueur : " + str(self.numero) + " | Veuillez entrer une touche valide")
-            # print(str(mp.current_process()) + " | Carte envoyée")
             timer.stop()
-            # print(str(mp.current_process()) + " | en attente du bool")
             blebool, t = mqverif.receive()
-            # print("bool recu")
             lebool = blebool.decode() == 'True'
-            # print(lebool)
             if lebool:
                 self.removecard(self.cartesmain[numcarte - 1])
-                # print("Cartes en main : " + str(len(self.cartesmain)))
-                # mqverif.send(str(len(self.cartesmain)).encode())
                 mqhandsize.send((str(len(self.cartesmain))).encode())
-                # print("J'ai envoyé le nombre de cartes dans ma main")
             else:
                 self.pioche(mqaffichage)
-                # print("Tu as pioché")
         threadaffichage.join()
 
