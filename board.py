@@ -1,4 +1,5 @@
 import os
+import shutil
 import signal
 import threading
 import time
@@ -68,7 +69,8 @@ class Board(mp.Process):
             if int(nmbcarteshand.decode()) == 0:
                 mqaffichage.send(str(1).encode(), type=4)
                 with self.printlock:
-                    print("Joueur " + str(carterecue.numerojoueur) + " gagne !")
+                    stringfin = "Joueur " + str(carterecue.numerojoueur) + " gagne !"
+                    print(stringfin.center(shutil.get_terminal_size()[0]))
                 while not self.deck.empty():
                     self.deck.get()
         else:
